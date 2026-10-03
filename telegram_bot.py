@@ -246,7 +246,21 @@ async def api_klines(request):
         limit = 90
         ohlcv_task = loop.run_in_executor(None, data_fetcher.fetch_ohlcv, symbol, timeframe, limit)
         ticker_task = loop.run_in_executor(None, data_fetcher.fetch_ticker, symbol)
-        (df, actual), ticker = await asyncio.gather(ohlcv_task, ticker_task)
+        res = await asyncio.gather(ohlcv_task, ticker_task, return_exceptions=True)
+        if isinstance(res[0], Exception):
+            raise res[0]
+        df, actual = res[0]
+        if isinstance(res[1], Exception) or not res[1]:
+            last_p = float(df.iloc[-1]['close'])
+            ticker = {
+                "price": last_p,
+                "change_pct": 0.0,
+                "high": float(df['high'].max()),
+                "low": float(df['low'].min()),
+                "volume": float(df['volume'].sum())
+            }
+        else:
+            ticker = res[1]
         df = data_fetcher.calculate_indicators(df)
 
         candles = []

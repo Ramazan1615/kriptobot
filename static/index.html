@@ -15,8 +15,18 @@
   <meta name="theme-color" content="#0B0E14">
   <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- TradingView Lightweight Charts (Yerel Yüksek Hızlı Kütüphane) -->
-  <script src="/static/lightweight-charts.js"></script>
+  <!-- TradingView Lightweight Charts (CDN + JSdelivr + Yerel Yedekli) -->
+  <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+  <script>
+    if (typeof LightweightCharts === 'undefined') {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"><\/script>');
+    }
+  </script>
+  <script>
+    if (typeof LightweightCharts === 'undefined') {
+      document.write('<script src="/static/lightweight-charts.js"><\/script>');
+    }
+  </script>
   <style>
     :root {
       --bg-dark: #0B0E14;
@@ -2619,9 +2629,26 @@
     // ==================== TRADINGVIEW CHARTS ====================
     function initTradingViewChart() {
       const container = document.getElementById('tvChart');
+      if (!container) return;
+
+      if (typeof LightweightCharts === 'undefined') {
+        setTimeout(initTradingViewChart, 200);
+        return;
+      }
+
+      const w = container.clientWidth || window.innerWidth || 360;
+      const h = container.clientHeight || 340;
+
+      if (chartInstance) {
+        chartInstance.applyOptions({ width: w, height: h });
+        return;
+      }
+
       container.innerHTML = '';
 
       chartInstance = LightweightCharts.createChart(container, {
+        width: w,
+        height: h,
         layout: {
           background: { color: '#10141C' },
           textColor: '#848E9C',
@@ -2673,7 +2700,9 @@
 
       window.addEventListener('resize', () => {
         if (chartInstance && container) {
-          chartInstance.applyOptions({ width: container.clientWidth, height: container.clientHeight });
+          const rw = container.clientWidth || window.innerWidth || 360;
+          const rh = container.clientHeight || 340;
+          chartInstance.applyOptions({ width: rw, height: rh });
         }
       });
     }
@@ -2700,10 +2729,19 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (tab === 'futures') {
         document.getElementById('navFutures').classList.add('active');
-        if (chartInstance) {
+        setTimeout(() => {
           const c = document.getElementById('tvChart');
-          chartInstance.applyOptions({ width: c.clientWidth, height: c.clientHeight });
-        }
+          if (c) {
+            const w = c.clientWidth || window.innerWidth || 360;
+            const h = c.clientHeight || 340;
+            if (chartInstance) {
+              chartInstance.applyOptions({ width: w, height: h });
+              chartInstance.timeScale().fitContent();
+            } else {
+              initTradingViewChart();
+            }
+          }
+        }, 60);
         refreshFuturesData();
       } else if (tab === 'favs') {
         document.getElementById('navFavs').classList.add('active');
@@ -2953,14 +2991,22 @@
         }
 
         if (data.ok && data.candles && data.candles.length > 0) {
-          candleSeries.setData(data.candles);
-          if (data.ema50) ema50Series.setData(data.ema50);
-          if (data.ema200) ema200Series.setData(data.ema200);
+          if (!candleSeries) {
+            initTradingViewChart();
+          }
+          if (candleSeries) {
+            candleSeries.setData(data.candles);
+            if (data.ema50 && ema50Series) ema50Series.setData(data.ema50);
+            if (data.ema200 && ema200Series) ema200Series.setData(data.ema200);
 
-          if (data.markers && data.markers.length > 0) {
-            candleSeries.setMarkers(data.markers);
-          } else {
-            candleSeries.setMarkers([]);
+            if (data.markers && data.markers.length > 0) {
+              candleSeries.setMarkers(data.markers);
+            } else {
+              candleSeries.setMarkers([]);
+            }
+            if (chartInstance) {
+              chartInstance.timeScale().fitContent();
+            }
           }
         }
       } catch (err) {
