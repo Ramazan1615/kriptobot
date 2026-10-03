@@ -66,13 +66,13 @@ logger = logging.getLogger("TelegramSignalBot")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "8508019942:AAG2W2UpBSlZfiLKpRANkiVME8O_mZ9FrPI")
 DEFAULT_GROQ_KEY = os.getenv("GROQ_API_KEY", "")
 SUBSCRIBERS_FILE = "subscribers.json"
-HTTP_PORT = 8080
+HTTP_PORT = int(os.getenv("PORT", 8080))
 
 data_fetcher = BinanceDataFetcher()
 ai_engine = AISignalEngine(api_key=DEFAULT_GROQ_KEY, model="openai/gpt-oss-120b")
 
-# Tünel URL'si (Cloudflare'den otomatik alınır)
-web_app_url = "http://127.0.0.1:8080"
+# Tünel URL'si (Cloudflare'den veya Render'dan otomatik alınır)
+web_app_url = os.getenv("RENDER_EXTERNAL_URL", f"http://127.0.0.1:{HTTP_PORT}")
 
 
 # ==================== ABONE YÖNETİCİSİ ====================
@@ -773,38 +773,54 @@ async def start_web_server():
 
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, "127.0.0.1", HTTP_PORT)
+    site = web.TCPSite(runner, "0.0.0.0", HTTP_PORT)
     await site.start()
-    logger.info(f"Web sunucusu 127.0.0.1:{HTTP_PORT} üzerinde başlatıldı.")
+    logger.info(f"Web sunucusu 0.0.0.0:{HTTP_PORT} üzerinde başlatıldı.")
 
 
 # ==================== CLOUDFLARE TÜNEL YÖNETİCİSİ ====================
 def start_cloudflare_tunnel() -> str:
-    """cloudflared.exe ile anında HTTPS tüneli açar ve Telegram uyumlu URL'yi döndürür."""
-    cmd = ["cloudflared.exe", "tunnel", "--url", f"http://127.0.0.1:{HTTP_PORT}"]
-    logger.info("Cloudflare HTTPS tüneli başlatılıyor...")
-    proc = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+    """Render.com ortamını veya yerel cloudflared tünelini yönetir."""
+    # 1. Render.com üzerindeyse direkt Render'ın kendi kalıcı HTTPS adresini kullan
+    render_url = os.getenv("RENDER_EXTERNAL_URL")
+    if render_url:
+        logger.info(f"Render.com canlı ortamı algılandı: {render_url}")
+        return render_url.rstrip('/')
 
-    url = None
-    import time
-    t0 = time.time()
-    while time.time() - t0 < 12:
-        line = proc.stderr.readline()
-        if not line:
-            time.sleep(0.1)
-            continue
-        if "trycloudflare.com" in line:
-            m = re.search(r"https://[a-zA-Z0-9-]+\.trycloudflare\.com", line)
-            if m:
-                url = m.group(0)
-                break
-
-    if url:
-        logger.info(f"Cloudflare HTTPS Tüneli Hazır: {url}")
-        return url
-    else:
-        logger.warning("Cloudflare URL yakalanamadı, varsayılan localhost devrede.")
+    # 2. Yerel geliştirme ortamında cloudflared kontrolü
+    cf_path = "cloudflared.exe" if sys.platform == "win32" else "cloudflared"
+    import shutil
+    has_cf = os.path.exists(cf_path) or bool(shutil.which(cf_path))
+    if not has_cf:
+        logger.info(f"Cloudflare bulunamadı, yerel port (http://127.0.0.1:{HTTP_PORT}) devrede.")
         return f"http://127.0.0.1:{HTTP_PORT}"
+
+    try:
+        cmd = [cf_path, "tunnel", "--url", f"http://127.0.0.1:{HTTP_PORT}"]
+        logger.info("Cloudflare HTTPS tüneli başlatılıyor...")
+        proc = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+
+        url = None
+        import time
+        t0 = time.time()
+        while time.time() - t0 < 12:
+            line = proc.stderr.readline()
+            if not line:
+                time.sleep(0.1)
+                continue
+            if "trycloudflare.com" in line:
+                m = re.search(r"https://[a-zA-Z0-9-]+\.trycloudflare\.com", line)
+                if m:
+                    url = m.group(0)
+                    break
+
+        if url:
+            logger.info(f"Cloudflare HTTPS Tüneli Hazır: {url}")
+            return url
+    except Exception as e:
+        logger.warning(f"Cloudflare başlatılamadı ({e}), standart adres kullanılıyor.")
+
+    return f"http://127.0.0.1:{HTTP_PORT}"
 
 
 # ==================== TELEGRAM BOT ARAYÜZÜ (FOTOĞRAFTAKİ BİREBİR YAPI) ====================
