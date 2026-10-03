@@ -1,5 +1,4 @@
 import sys
-import ccxt
 import pandas as pd
 import numpy as np
 import logging
@@ -135,57 +134,25 @@ class BinanceDataFetcher:
     """
 
     def __init__(self):
-        # 1. Binance Vadeli İşlemler (Futures USDT-M)
-        self.futures_exchange = ccxt.binance({
-            'enableRateLimit': True,
-            'timeout': 5000,
-            'options': {
-                'defaultType': 'future',
-                'adjustForTimeDifference': True
-            }
-        })
-        # 2. Binance Spot (Yedek & Spot-only coinler için)
-        self.spot_exchange = ccxt.binance({
-            'enableRateLimit': True,
-            'timeout': 5000,
-            'options': {
-                'defaultType': 'spot',
-                'adjustForTimeDifference': True
-            }
-        })
         self._cached_symbols: List[str] = []
-        self._ticker_cache: Dict[str, Tuple[Any, str]] = {}
-        self._ohlcv_cache: Dict[str, Tuple[Any, str]] = {}
         self._market_overview_cache: Optional[List[Dict[str, Any]]] = None
         self._market_overview_time: float = 0.0
 
-    def _resolve_exchange_and_symbol(self, symbol: str) -> Tuple[ccxt.binance, str]:
+    def _resolve_symbols(self, symbol: str) -> Tuple[str, str, str]:
         """
-        Kullanıcının girdiği sembolü (örn: 'SHIB/USDT', 'BONK/USDT', '1000SHIB/USDT', 'BTC/USDT')
-        Binance Futures'taki gerçek vadeli işlem kontratına veya Spot piyasasına yönlendirir.
+        Gelen sembolü (örn. 'BTC/USDT', 'SHIB/USDT', '1000PEPE/USDT')
+        Binance Futures raw sembolü (örn. 'BTCUSDT', '1000SHIBUSDT') ve
+        Spot sembolü (örn. 'BTCUSDT', 'SHIBUSDT') olarak çözer.
         """
         sym = symbol.strip().upper()
-        if ":" in sym:
-            return self.futures_exchange, sym
-
         base = sym.split('/')[0]
-        quote = sym.split('/')[1] if '/' in sym else 'USDT'
+        quote = sym.split('/')[1].split(':')[0] if '/' in sym else 'USDT'
 
-        candidates = []
-        # 1. Eğer SHIB, BONK gibi bir meme coin ise 1000SHIB/USDT:USDT formatını öncelikli dene
-        if base in FUTURES_MULTIPLIER_MAP:
-            mult_base = FUTURES_MULTIPLIER_MAP[base]
-            candidates.append((self.futures_exchange, f"{mult_base}/{quote}:USDT"))
-            candidates.append((self.futures_exchange, f"{mult_base}/{quote}"))
-
-        # 2. Standart Futures formatları
-        candidates.append((self.futures_exchange, f"{base}/{quote}:USDT"))
-        candidates.append((self.futures_exchange, f"{base}/{quote}"))
-
-        # 3. Spot formatı
-        candidates.append((self.spot_exchange, f"{base}/{quote}"))
-
-        return candidates[0]
+        mult_base = FUTURES_MULTIPLIER_MAP.get(base, base)
+        fut_sym = f"{mult_base}{quote}"
+        spot_sym = f"{base}{quote}"
+        display_sym = f"{mult_base}/{quote}:USDT" if base in FUTURES_MULTIPLIER_MAP else f"{base}/{quote}:USDT"
+        return fut_sym, spot_sym, display_sym
 
     def fetch_all_futures_symbols(self) -> List[str]:
         """
@@ -243,57 +210,43 @@ class BinanceDataFetcher:
     def fetch_ticker(self, symbol: str) -> Dict[str, Any]:
         """
         Herhangi bir Binance coini için anlık fiyat ve 24s istatistiğini çeker.
-        SHIB/USDT ve BONK/USDT gibi sembolleri otomatik olarak vadeli kontrata bağlar.
+        Hafif doğrudan REST sorgusu ile bellek tüketmez (~0.1 MB).
         """
+        import requests
         sym = symbol.strip().upper()
-        base = sym.split('/')[0]
-        quote = sym.split('/')[1] if '/' in sym else 'USDT'
+        fut_sym, spot_sym, actual_sym = self._resolve_symbols(sym)
 
-        # Denenecek aday semboller ve borsalar
-        candidates = []
-        if base in FUTURES_MULTIPLIER_MAP:
-            mult_base = FUTURES_MULTIPLIER_MAP[base]
-            candidates.append((self.futures_exchange, f"{mult_base}/{quote}:USDT"))
-        candidates.append((self.futures_exchange, f"{base}/{quote}:USDT"))
-        candidates.append((self.futures_exchange, f"{base}/{quote}"))
-        candidates.append((self.spot_exchange, f"{base}/{quote}"))
+        t = None
+        used_sym = actual_sym
+        try:
+            r = requests.get(f"https://fapi.binance.com/fapi/v1/ticker/24hr?symbol={fut_sym}", timeout=4).json()
+            if isinstance(r, dict) and "lastPrice" in r:
+                t = r
+                used_sym = actual_sym
+        except Exception:
+            pass
 
-        ticker = None
-        used_symbol = sym
-
-        # 1. Önbellekten dene
-        if sym in self._ticker_cache:
-            ex_cached, cand_cached = self._ticker_cache[sym]
+        if not t:
             try:
-                ticker = ex_cached.fetch_ticker(cand_cached)
-                used_symbol = cand_cached
+                r = requests.get(f"https://api.binance.com/api/v3/ticker/24hr?symbol={spot_sym}", timeout=4).json()
+                if isinstance(r, dict) and "lastPrice" in r:
+                    t = r
+                    used_sym = f"{spot_sym[:-4]}/USDT"
             except Exception:
-                ticker = None
+                pass
 
-        # 2. Önbellekte yoksa veya başarısız olduysa adayları dene
-        if not ticker:
-            for ex, candidate in candidates:
-                try:
-                    ticker = ex.fetch_ticker(candidate)
-                    used_symbol = candidate
-                    self._ticker_cache[sym] = (ex, candidate)
-                    break
-                except Exception:
-                    continue
+        if not t:
+            t = {}
 
-        if not ticker:
-            ticker = self.spot_exchange.fetch_ticker(f"{base}/{quote}")
-            self._ticker_cache[sym] = (self.spot_exchange, f"{base}/{quote}")
-
-        last_price = float(ticker.get('last') or 0.0)
-        change_pct = float(ticker.get('percentage') or 0.0)
-        high_24h = float(ticker.get('high') or 0.0)
-        low_24h = float(ticker.get('low') or 0.0)
-        volume_24h = float(ticker.get('quoteVolume') or ticker.get('baseVolume') or 0.0)
+        last_price = float(t.get('lastPrice') or 0.0)
+        change_pct = float(t.get('priceChangePercent') or 0.0)
+        high_24h = float(t.get('highPrice') or last_price)
+        low_24h = float(t.get('lowPrice') or last_price)
+        volume_24h = float(t.get('quoteVolume') or t.get('volume') or 0.0)
 
         return {
             "symbol": sym,
-            "actual_symbol": used_symbol,
+            "actual_symbol": used_sym,
             "price": last_price,
             "change_pct": round(change_pct, 2),
             "high": high_24h,
@@ -304,50 +257,44 @@ class BinanceDataFetcher:
     def fetch_ohlcv(self, symbol: str, timeframe: str = '15m', limit: int = 100) -> Tuple[pd.DataFrame, str]:
         """
         Binance Vadeli veya Spot üzerinden son 'limit' adet mumu çeker.
+        Doğrudan REST API ile ccxt hafıza şişmesini önler (~0.2 MB).
         """
+        import requests
         sym = symbol.strip().upper()
-        base = sym.split('/')[0]
-        quote = sym.split('/')[1] if '/' in sym else 'USDT'
+        fut_sym, spot_sym, actual_sym = self._resolve_symbols(sym)
 
-        candidates = []
-        if base in FUTURES_MULTIPLIER_MAP:
-            mult_base = FUTURES_MULTIPLIER_MAP[base]
-            candidates.append((self.futures_exchange, f"{mult_base}/{quote}:USDT"))
-        candidates.append((self.futures_exchange, f"{base}/{quote}:USDT"))
-        candidates.append((self.futures_exchange, f"{base}/{quote}"))
-        candidates.append((self.spot_exchange, f"{base}/{quote}"))
+        tf_map = {'1m_month': '1M'}
+        tf = tf_map.get(timeframe.lower(), timeframe)
 
-        ohlcv = None
-        matched_symbol = sym
+        rows = None
+        matched_symbol = actual_sym
 
-        # 1. Önbellekten dene
-        if sym in self._ohlcv_cache:
-            ex_cached, cand_cached = self._ohlcv_cache[sym]
+        # 1. Futures dene
+        try:
+            url = f"https://fapi.binance.com/fapi/v1/klines?symbol={fut_sym}&interval={tf}&limit={limit}"
+            r = requests.get(url, timeout=5).json()
+            if isinstance(r, list) and len(r) >= 5:
+                rows = r
+                matched_symbol = actual_sym
+        except Exception:
+            pass
+
+        # 2. Spot dene
+        if not rows:
             try:
-                ohlcv = ex_cached.fetch_ohlcv(cand_cached, timeframe=timeframe, limit=limit)
-                if ohlcv and len(ohlcv) >= 10:
-                    matched_symbol = cand_cached
-                else:
-                    ohlcv = None
+                url = f"https://api.binance.com/api/v3/klines?symbol={spot_sym}&interval={tf}&limit={limit}"
+                r = requests.get(url, timeout=5).json()
+                if isinstance(r, list) and len(r) >= 5:
+                    rows = r
+                    matched_symbol = f"{spot_sym[:-4]}/USDT"
             except Exception:
-                ohlcv = None
+                pass
 
-        # 2. Önbellek yoksa adayları tara
-        if not ohlcv:
-            for ex, candidate in candidates:
-                try:
-                    ohlcv = ex.fetch_ohlcv(candidate, timeframe=timeframe, limit=limit)
-                    if ohlcv and len(ohlcv) >= 10:
-                        matched_symbol = candidate
-                        self._ohlcv_cache[sym] = (ex, candidate)
-                        break
-                except Exception:
-                    continue
+        if not rows or len(rows) < 5:
+            raise ValueError(f"'{symbol}' için Binance üzerinde mum verisi bulunamadı.")
 
-        if not ohlcv or len(ohlcv) < 10:
-            raise ValueError(f"'{symbol}' için Binance üzerinde yeterli mum verisi bulunamadı.")
-
-        df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+        df = pd.DataFrame(rows, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume', 'close_time', 'qav', 'num_trades', 'taker_base_vol', 'taker_quote_vol', 'ignore'])
+        df = df[['timestamp', 'open', 'high', 'low', 'close', 'volume']]
         df['datetime'] = pd.to_datetime(df['timestamp'], unit='ms')
         for col in ['open', 'high', 'low', 'close', 'volume']:
             df[col] = pd.to_numeric(df[col], errors='coerce')
@@ -356,26 +303,34 @@ class BinanceDataFetcher:
 
     def fetch_order_book(self, symbol: str, limit: int = 7) -> Dict[str, Any]:
         """Binance Futures anlık alış ve satış emir tahtasını çeker."""
+        import requests
         sym = symbol.strip().upper()
-        if sym in self._ohlcv_cache:
-            ex, cand = self._ohlcv_cache[sym]
-            try:
-                ob = ex.fetch_order_book(cand, limit=limit)
-                return {
-                    "bids": ob.get("bids", [])[:limit],
-                    "asks": ob.get("asks", [])[:limit]
-                }
-            except Exception:
-                pass
+        fut_sym, spot_sym, _ = self._resolve_symbols(sym)
+
+        api_limit = 10 if limit <= 10 else 20
         try:
-            ex, actual = self._resolve_exchange_and_symbol(sym)
-            ob = ex.fetch_order_book(actual, limit=limit)
-            return {
-                "bids": ob.get("bids", [])[:limit],
-                "asks": ob.get("asks", [])[:limit]
-            }
+            url = f"https://fapi.binance.com/fapi/v1/depth?symbol={fut_sym}&limit={api_limit}"
+            r = requests.get(url, timeout=4).json()
+            if "bids" in r and "asks" in r:
+                return {
+                    "bids": [[float(p), float(q)] for p, q in r["bids"][:limit]],
+                    "asks": [[float(p), float(q)] for p, q in r["asks"][:limit]]
+                }
         except Exception:
-            return {"bids": [], "asks": []}
+            pass
+
+        try:
+            url = f"https://api.binance.com/api/v3/depth?symbol={spot_sym}&limit={api_limit}"
+            r = requests.get(url, timeout=4).json()
+            if "bids" in r and "asks" in r:
+                return {
+                    "bids": [[float(p), float(q)] for p, q in r["bids"][:limit]],
+                    "asks": [[float(p), float(q)] for p, q in r["asks"][:limit]]
+                }
+        except Exception:
+            pass
+
+        return {"bids": [], "asks": []}
 
     def _calculate_indicators_pandas(self, df: pd.DataFrame) -> pd.DataFrame:
         df = df.copy()
