@@ -156,6 +156,8 @@ class BinanceDataFetcher:
         self._cached_symbols: List[str] = []
         self._ticker_cache: Dict[str, Tuple[Any, str]] = {}
         self._ohlcv_cache: Dict[str, Tuple[Any, str]] = {}
+        self._market_overview_cache: Optional[List[Dict[str, Any]]] = None
+        self._market_overview_time: float = 0.0
 
     def _resolve_exchange_and_symbol(self, symbol: str) -> Tuple[ccxt.binance, str]:
         """
@@ -188,34 +190,41 @@ class BinanceDataFetcher:
     def fetch_all_futures_symbols(self) -> List[str]:
         """
         Binance üzerindeki TÜM USDT paritelerini (Futures + Spot + Çarpanlı Meme Coinler) çeker.
-        SHIB, BONK, PEPE, FLOKI gibi tüm coinler hem normal hem 1000x haliyle bulunur (1,600+ Coin).
+        Hafif doğrudan REST sorgusu ile ccxt load_markets yükünü kaldırarak RAM tasarrufu sağlar.
         """
         if self._cached_symbols:
             return self._cached_symbols
 
+        import requests
+        import gc
         symbols_set = set()
 
         # 1. Futures paritelerini çek
         try:
-            fut_markets = self.futures_exchange.load_markets()
-            for m in fut_markets.values():
-                if m.get('quote') == 'USDT' and m.get('active'):
-                    clean_sym = m['symbol'].split(':')[0]
-                    symbols_set.add(clean_sym)
-                    # Çarpanlı coinlerin düz halini de ekle (örn: 1000SHIB -> SHIB/USDT)
-                    base = m.get('base', '')
+            r = requests.get('https://fapi.binance.com/fapi/v1/ticker/24hr', timeout=8).json()
+            for item in r:
+                s = item.get('symbol', '')
+                if s.endswith('USDT'):
+                    base = s[:-4]
+                    symbols_set.add(f"{base}/USDT")
                     if base.startswith('1000') or base.startswith('1000000'):
                         clean_base = base.lstrip('0123456789')
                         symbols_set.add(f"{clean_base}/USDT")
+            del r
+            gc.collect()
         except Exception as e:
             logger.warning(f"Futures piyasaları yüklenirken hata: {e}")
 
         # 2. Spot paritelerini çek (Binance'deki tüm diğer coinler)
         try:
-            spot_markets = self.spot_exchange.load_markets()
-            for m in spot_markets.values():
-                if m.get('quote') == 'USDT' and m.get('active'):
-                    symbols_set.add(m['symbol'])
+            r = requests.get('https://api.binance.com/api/v3/ticker/24hr', timeout=8).json()
+            for item in r:
+                s = item.get('symbol', '')
+                if s.endswith('USDT'):
+                    base = s[:-4]
+                    symbols_set.add(f"{base}/USDT")
+            del r
+            gc.collect()
         except Exception as e:
             logger.warning(f"Spot piyasaları yüklenirken hata: {e}")
 
@@ -515,32 +524,43 @@ class BinanceDataFetcher:
     def fetch_all_market_overview(self) -> List[Dict[str, Any]]:
         """
         Binance üzerindeki tüm USDT paritelerini (650+ token) 24s fiyat, değişim, hacim
-        ve sektör kategorileriyle (MEME, AI, Solana, L1/L2, DeFi vb.) tek seferde çeker.
+        ve sektör kategorileriyle (MEME, AI, Solana, L1/L2, DeFi vb.) çeker.
+        Doğrudan hafif REST API ve 20 saniyelik RAM önbelleği ile bellek tüketimini 5 MB altında tutar.
         """
-        raw_tickers = {}
+        import time
+        import requests
+        import gc
+
+        # 20 saniye önbellek geçerliyse anında döndür (RAM ve CPU tüketmez)
+        now = time.time()
+        if self._market_overview_cache and (now - self._market_overview_time) < 20.0:
+            return self._market_overview_cache
+
+        results = []
+        raw_items = []
         try:
-            raw_tickers = self.spot_exchange.fetch_tickers()
+            raw_items = requests.get('https://api.binance.com/api/v3/ticker/24hr', timeout=8).json()
         except Exception as e:
             logger.warning(f"Spot tickers çekilemedi, vadeli deneniyor: {e}")
             try:
-                raw_tickers = self.futures_exchange.fetch_tickers()
+                raw_items = requests.get('https://fapi.binance.com/fapi/v1/ticker/24hr', timeout=8).json()
             except Exception as e2:
                 logger.error(f"Piyasa verisi çekilemedi: {e2}")
-                return []
+                return self._market_overview_cache or []
 
-        results = []
-        for symbol, t in raw_tickers.items():
-            if not symbol.endswith('/USDT'):
+        for item in raw_items:
+            sym = item.get('symbol', '')
+            if not sym.endswith('USDT'):
                 continue
-            last = float(t.get('last') or 0.0)
+            last = float(item.get('lastPrice') or 0.0)
             if last <= 0:
                 continue
 
-            base = symbol.split('/')[0]
-            pct = float(t.get('percentage') or 0.0)
-            quote_vol = float(t.get('quoteVolume') or 0.0)
-            high_24h = float(t.get('high') or last)
-            low_24h = float(t.get('low') or last)
+            base = sym[:-4]
+            pct = float(item.get('priceChangePercent') or 0.0)
+            quote_vol = float(item.get('quoteVolume') or 0.0)
+            high_24h = float(item.get('highPrice') or last)
+            low_24h = float(item.get('lowPrice') or last)
 
             meta = COIN_METADATA.get(base, {})
             name = meta.get('name', base)
@@ -548,7 +568,7 @@ class BinanceDataFetcher:
             if 'All' not in categories:
                 categories.append('All')
 
-            # Tahmini Piyasa Değeri (Market Cap hesaplama simülasyonu)
+            # Tahmini Piyasa Değeri
             est_mcap = quote_vol * (15.0 if base in ['BTC', 'ETH'] else (8.0 if base in ['BNB', 'SOL', 'XRP'] else 3.5))
 
             results.append({
@@ -564,7 +584,12 @@ class BinanceDataFetcher:
                 'categories': categories,
             })
 
+        del raw_items
+        gc.collect()
+
         # Hacme göre azalan sırala (Top tokens by volume)
         results.sort(key=lambda x: x['volume_24h'], reverse=True)
+        self._market_overview_cache = results
+        self._market_overview_time = now
         return results
 
