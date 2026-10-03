@@ -949,6 +949,22 @@ async def ara_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode=ParseMode.MARKDOWN
         )
 
+async def keep_alive_ping():
+    """Render ücretsiz sunucusunun 15 dakika hareketsizlikten uykuya dalmasını (502 hatasını) engeller."""
+    await asyncio.sleep(45)
+    import aiohttp
+    while True:
+        try:
+            render_url = os.getenv("RENDER_EXTERNAL_URL")
+            if render_url:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(f"{render_url.rstrip('/')}/api/news?symbol=BTC", timeout=15) as resp:
+                        logger.info("Render keep-alive ping başarılı: Sunucu 7/24 uyanık tutuluyor.")
+        except Exception as e:
+            logger.debug(f"Keep-alive ping: {e}")
+        await asyncio.sleep(600)  # 10 dakikada bir istek atarak uyumayı önler
+
+
 # ==================== ANA ÇALIŞTIRICI ====================
 def main():
     global web_app_url
@@ -971,21 +987,6 @@ def main():
     app.add_handler(CommandHandler("coin", ara_command))
     app.add_handler(CallbackQueryHandler(search_coin_callback, pattern="^search_coin$"))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, text_handler))
-
-async def keep_alive_ping():
-    """Render ücretsiz sunucusunun 15 dakika hareketsizlikten uykuya dalmasını (502 hatasını) engeller."""
-    await asyncio.sleep(45)
-    import aiohttp
-    while True:
-        try:
-            render_url = os.getenv("RENDER_EXTERNAL_URL")
-            if render_url:
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(f"{render_url.rstrip('/')}/api/news?symbol=BTC", timeout=15) as resp:
-                        logger.info("Render keep-alive ping başarılı: Sunucu 7/24 uyanık tutuluyor.")
-        except Exception as e:
-            logger.debug(f"Keep-alive ping: {e}")
-        await asyncio.sleep(600)  # 10 dakikada bir istek atarak uyumayı önler
 
     # Kalıcı Sol Alt Menü Butonu Ayarla (Telefonun sol altında '📱 Terminal' butonu)
     async def post_init(application):
@@ -1010,3 +1011,4 @@ async def keep_alive_ping():
 
 if __name__ == "__main__":
     main()
+
