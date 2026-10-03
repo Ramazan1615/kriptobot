@@ -1,0 +1,21 @@
+{
+  "name": "Kripto VIP Sinyal RADE",
+  "short_name": "RADE Sinyal",
+  "description": "Yapay Zeka Destekli Binance Vadeli VIP Terminali",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0E14",
+  "theme_color": "#1E3A8A",
+  "icons": [
+    {
+      "src": "/static/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
