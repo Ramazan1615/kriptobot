@@ -30,10 +30,6 @@ try:
 except Exception:
     pass
 
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
 import pandas as pd
 from aiohttp import web
 
