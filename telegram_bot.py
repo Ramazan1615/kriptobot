@@ -531,180 +531,414 @@ def get_crypto_news(symbol: str, category: str = "all") -> List[Dict[str, Any]]:
     cat = (category or "all").lower()
 
     all_news_pool = [
-        # BTC
+        # ==================== BITCOIN (BTC) ====================
         {
+            "id": "btc_oi_ath",
             "category": "btc",
             "symbol": "BTC",
-            "title": "Bitcoin Vadeli İşlemlerinde Açık Pozisyon 38.4 Milyar Dolara Ulaştı",
+            "title": "Bitcoin Vadeli İşlemlerinde Açık Pozisyon 38.4 Milyar Dolara Ulaştı: Büyük Kırılım Yakın mı?",
             "source": "Binance Square",
-            "time": "8 dk önce",
+            "time": "6 dk önce",
+            "read_time": "3 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 Güçlü Yükseliş Eğilimli",
             "badge": "🔥 Sıcak Haber",
-            "desc": "Kurumsal yatırımcıların vadeli işlemlerdeki alım iştahı hız kazanırken fonlama oranları pozitif tarafta dengeleniyor."
+            "desc": "Kurumsal yatırımcıların vadeli işlemlerdeki alım iştahı hız kazanırken fonlama oranları pozitif tarafta dengeleniyor.",
+            "summary_bullets": [
+                "Binance ve CME vadeli işlemlerinde Açık Pozisyon (Open Interest) 38.4 milyar dolarla tüm zamanların en yüksek seviyesini test ediyor.",
+                "Fonlama oranları (Funding Rate) %0.012 seviyesinde kalarak piyasanın aşırı ısınmadığını ve sağlıklı bir spot/vadeli dengesi olduğunu gösteriyor.",
+                "86.500$ ve 88.200$ bantlarında 1.2 milyar dolarlık yoğun short likidasyon kümelenmesi bulunuyor."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Kurumsal Talep ve Açık Pozisyon Patlaması",
+                    "body": "Kripto para piyasalarında son 24 saatte yaşanan hareketlilikle birlikte, Binance ve CME vadeli kontratlarındaki Açık Pozisyon (OI) toplamı 38.4 milyar dolar seviyesine ulaştı. Kurumsal fon yöneticilerinin spot ETF'lerin yanı sıra vadeli piyasada da yoğun koruma (hedge) ve kaldıraçlı alım pozisyonları açtığı gözleniyor. Fonlama oranlarının aşırı pozitif bölgeye geçmemesi, vadeli alımların sadece bireysel yatırımcı coşkusuyla değil, dengeli kurumsal emir bloklarıyla desteklendiğini teyit ediyor."
+                },
+                {
+                    "heading": "⚡ Likidasyon Isı Haritası (Liquidation Heatmap)",
+                    "body": "Borsalardaki likidasyon ısı haritaları incelendiğinde, 85.500$ üzerindeki short pozisyon tasfiye havuzlarının giderek yoğunlaştığı görülüyor. Özellikle 86.800$ ve 88.200$ seviyelerinde kümelenen yaklaşık 1.2 milyar dolarlık tasfiye emri, yukarı yönlü ani bir kırılım durumunda 'Short Squeeze' (kısa pozisyon sıkışması) tetikleyerek yükseliş momentumunu hızlandırabilir. Aşağı tarafta ise 83.200$ seviyesinde güçlü bir long likidasyon desteği yer alıyor."
+                },
+                {
+                    "heading": "🎯 Takip Edilecek Kritik Destek ve Direnç Seviyeleri",
+                    "body": "Teknik göstergeler açısından Bitcoin, 4 saatlik ve günlük grafiklerde EMA 50 (83.850$) ve EMA 200 (81.400$) ortalamalarının üzerinde güçlü seyrini koruyor. RSI göstergesi 58-62 nötr-boğa bölgesinde hareket ederken, MACD pozitif histogram üretmeye devam ediyor. Traderlar için ana direnç bölgesi 86.500$ - 88.000$ aralığı olurken; olası kâr satışlarında 83.500$ ve 82.200$ seviyeleri ilk ana destek noktaları olarak izlenmelidir."
+                },
+                {
+                    "heading": "💡 Vadeli İşlem Stratejisi & Risk Yönetimi",
+                    "body": "Açık pozisyonların zirvede olduğu dönemlerde piyasa yapıcıların iki yönlü volatilite iğneleri atabileceği unutulmamalıdır. Bu nedenle 10x üzeri yüksek kaldıraç yerine 3x - 7x aralığında kontrollü kaldıraç tercih edilmeli, giriş seviyesinin %1.5 - %2.0 altına mutlaka koruyucu Stop Loss emri yerleştirilmelidir."
+                }
+            ]
         },
         {
+            "id": "btc_etf_inflow",
             "category": "btc",
             "symbol": "BTC",
-            "title": "Spot Bitcoin ETF Girişleri 4 Günlük Net Pozitif Akış Kaydetti",
+            "title": "Spot Bitcoin ETF'lerinde 4 Günlük Kesintisiz Ralli: 1.8 Milyar Dolarlık Net Giriş",
             "source": "Bloomberg Crypto",
-            "time": "22 dk önce",
+            "time": "18 dk önce",
+            "read_time": "3 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 Kurumsal Boğa Sinyali",
             "badge": "📊 Kurumsal",
-            "desc": "BlackRock (IBIT) ve Fidelity fonlarına kurumsal net sermaye girişleri devam ederken piyasa derinliği güçleniyor."
+            "desc": "BlackRock (IBIT) ve Fidelity fonlarına kurumsal net sermaye akışı devam ederken borsa rezervleri son 6 yılın en düşük seviyesine geriledi.",
+            "summary_bullets": [
+                "ABD Spot Bitcoin ETF'lerine son 4 işlem gününde net 1.84 milyar dolarlık taze kurumsal sermaye girişi gerçekleşti.",
+                "BlackRock IBIT fonu tek başına günlük 340 milyon dolarlık pay alarak toplam varlık büyüklüğünü artırdı.",
+                "Borsalardaki likit Bitcoin rezervleri 2.1 milyon adedin altına inerek arz şokunun derinleştiğini gösterdi."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Wall Street Fonlarının Spot Alım Dalgası",
+                    "body": "Bloomberg ETF analistlerinin derlediği verilere göre, kurumsal yatırımcıların Bitcoin iştahı art arda dördüncü işlem gününde de rekor kırdı. BlackRock, Fidelity ve Ark Invest fonları aracılığıyla piyasaya giren günlük ortalama 450 milyon dolarlık talep, madencilerin günlük ürettiği yaklaşık 450 BTC'lik yeni arzın neredeyse 8 katına tekabül ediyor. Bu durum, tezgah üstü (OTC) masalardaki likit arzı kurutarak spot fiyatı yukarı taşıyor."
+                },
+                {
+                    "heading": "⚡ Vadeli Piyasaya Yansımaları",
+                    "body": "Spot taraftaki kesintisiz alımlar, vadeli işlem traderlarının düşüşleri hızlı bir şekilde satın almasına (Buy the Dip) zemin hazırlıyor. Vadeli grafikte 15 dakikalık ve 1 saatlik periyotlarda geri çekilmelerin EMA 50 seviyesinde anında karşılandığı ve hacimli yeşil mumlarla tepki verdiği gözleniyor."
+                },
+                {
+                    "heading": "🎯 Stratejik Seviyeler",
+                    "body": "Spot piyasada 84.000$ taban desteği güçlenirken, vadeli kontratlarda 85.800$ üzeri saatlik kapanışlar yeni bir fiyat keşif dalgasını başlatabilir. Olası kâr realizasyonlarında 83.100$ bölgesi güçlü talep bölgesi olarak değerlendirilmelidir."
+                }
+            ]
         },
         {
+            "id": "btc_miners_hodl",
             "category": "btc",
             "symbol": "BTC",
-            "title": "Kritik Direnç Seviyelerinde Vadeli Likidasyon Kümelenmesi Görülüyor",
-            "source": "CoinDesk",
-            "time": "45 dk önce",
-            "sentiment": "neutral",
-            "badge": "⚡ Vadeli",
-            "desc": "Üst seviyelerdeki short tasfiye havuzları tetiklenebilir, ani volatilite artışına karşı stop seviyeleri korunmalıdır."
-        },
-        {
-            "category": "btc",
-            "symbol": "BTC",
-            "title": "Madenci Cüzdanlarında Satış Baskısı Azalıyor: Akümülasyon Başladı",
+            "title": "Madenci Cüzdanlarında Satış Baskısı Azalıyor: Tarihi Akümülasyon Başladı",
             "source": "CryptoQuant",
-            "time": "1 saat önce",
+            "time": "42 dk önce",
+            "read_time": "2 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 Arz Kısıtı Desteği",
             "badge": "⛏️ Madencilik",
-            "desc": "Hashrate rekor kırmaya devam ederken madencilerin borsalara coin transferleri son 3 ayın en düşük seviyesinde."
+            "desc": "Ağ hashrate'i tüm zamanların zirvesini kırarken madencilerin borsalara coin transferleri son 3 ayın en düşük seviyesine indi.",
+            "summary_bullets": [
+                "Madenci Çıkış İndeksi (MPI) -0.42 seviyesine inerek madencilerin satış yapmadığını, biriktirdiğini doğruladı.",
+                "Bitcoin ağ güvenliği (Hashrate) 680 EH/s ile tarihi zirveye ulaştı.",
+                "Halving sonrası verimsiz makineleri kapatan madenciler, yapay zeka veri merkezi gelirleriyle kârlılıklarını koruyor."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Madenci Rezervlerinde Son Durum",
+                    "body": "On-chain veri sağlayıcısı CryptoQuant'ın yayınladığı son rapora göre, madenci havuzlarının borsalara gönderdiği günlük BTC miktarı Mayıs ayından bu yana en düşük seviyeye geriledi. Madencilik şirketlerinin birçoğu gelir çeşitlendirmesi amacıyla yapay zeka (AI) yüksek performanslı hesaplama merkezlerine geçiş yaparak, ellerindeki Bitcoin'leri satmak yerine bilançolarında tutmayı tercih ediyor."
+                },
+                {
+                    "heading": "💡 Piyasa Yorumu",
+                    "body": "Piyasadaki en büyük doğal satıcı grubu olan madencilerin satış baskısını kesmesi, alıcıların çok daha az hacimle fiyatı yukarı taşıyabilmesini sağlıyor. Vadeli işlemlerde düşüş yönlü short pozisyon arayan traderların madenci satış baskısı olmamasını dikkate alması önerilmektedir."
+                }
+            ]
         },
-        # ETH
+
+        # ==================== ETHEREUM (ETH) ====================
         {
+            "id": "eth_staking_ath",
             "category": "eth",
             "symbol": "ETH",
-            "title": "Ethereum Ağında Staking Oranı %28.5 Zirvesini Test Ediyor",
+            "title": "Ethereum Ağında Staking Oranı %28.5 Zirvesini Test Ediyor: Likit Arz Kuruyor",
             "source": "CoinTelegraph",
-            "time": "14 dk önce",
+            "time": "12 dk önce",
+            "read_time": "3 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 Yükseliş Potansiyeli Yüksek",
             "badge": "💎 Staking",
-            "desc": "Borsalardaki likit ETH arzı rekor dip seviyeye gerilerken kurumsal staking talebi yukarı yönlü ivmeyi destekliyor."
+            "desc": "Borsalardaki likit ETH arzı tarihi dip seviyelere inerken kurumsal doğrulayıcı kuyruğu uzamaya devam ediyor.",
+            "summary_bullets": [
+                "Beacon Chain üzerinde kilitli toplam ETH miktarı 34.6 milyon adede (%28.5) ulaşarak rekor tazeledi.",
+                "Merkezi borsalardaki toplam ETH rezervi son 8 yılın en düşük oranı olan %9.8'e geriledi.",
+                "ETH/BTC paritesinde dip dönüş formasyonu sinyalleri güçleniyor."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Dolaşımdaki Arzın Kilitlenmesi",
+                    "body": "Ethereum Proof-of-Stake konsensüsünde doğrulayıcı olmak için kilitlenen varlıkların toplam arz içindeki payı %28.5'i aştı. Lido, Rocket Pool ve kurumsal saklama kuruluşları üzerinden yapılan staking akışı, spot piyasada anlık satışa sunulabilecek serbest dolaşımdaki ETH miktarını ciddi şekilde kısıtlıyor. Buna ek olarak EIP-1559 işlem ücreti yakım mekanizması ağ aktivitesiyle birlikte arzı deflasyonist tutmaya devam ediyor."
+                },
+                {
+                    "heading": "⚡ Vadeli İşlemler ve Fonlama Dinamikleri",
+                    "body": "ETH/USDT vadeli sözleşmelerinde açık pozisyonlar 2.620$ - 2.680$ bandında yatay akümülasyon sergiliyor. Fonlama oranları %0.008 ile nötr seviyede seyrederken, kaldıraçlı long pozisyon maliyetinin ucuz kalması vadeli alıcılar için cazip bir risk/getiri profili sunuyor."
+                },
+                {
+                    "heading": "🎯 Destek & Direnç Seviyeleri",
+                    "body": "Kısa vadede 2.620$ ana destek konumunda. 2.710$ üzerindeki 4 saatlik mum kapanışları, 2.790$ ve 2.880$ direnç bölgelerine doğru hızlı bir ralli başlatma potansiyeline sahiptir. 2.580$ altı ise stop seviyesi olarak izlenmelidir."
+                }
+            ]
         },
         {
+            "id": "eth_l2_tvl_ath",
             "category": "eth",
             "symbol": "ETH",
             "title": "Layer 2 Ağlarındaki Toplam Kilitli Varlık (TVL) 44 Milyar Doları Aştı",
             "source": "Binance News",
-            "time": "38 dk önce",
+            "time": "35 dk önce",
+            "read_time": "3 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 Ekosistem Genişlemesi",
             "badge": "🚀 Ekosistem",
-            "desc": "Arbitrum, Base ve Optimism üzerindeki aktif cüzdan sayıları işlem hacmini yukarı çekiyor."
+            "desc": "Arbitrum, Base ve Optimism ağlarında günlük aktif işlem sayısı katlanırken vadeli altcoin likiditesi zirveye ulaştı.",
+            "summary_bullets": [
+                "L2Beat verilerine göre Arbitrum 18.2B$, Base 10.4B$ ve Optimism 7.6B$ TVL ile ekosistemi domine ediyor.",
+                "Dencun yükseltmesi sayesinde L2 işlem ücretleri 0.01$ seviyesine inerek bireysel katılımı maksimize etti.",
+                "Ethereum ana ağı, tüm bu katmanların güvenlik teminatı olarak gas geliri üretmeye devam ediyor."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Katman-2 Ağlarının Yükselişi",
+                    "body": "Ethereum ekosistemi, ölçeklenme vizyonunun merkezinde yer alan Layer 2 ağlarında tarihi bir likidite yoğunlaşmasına tanıklık ediyor. Özellikle Coinbase destekli Base ağı ve Arbitrum One üzerindeki günlük işlem sayısı, birçok bağımsız Katman-1 ağının toplamını geride bıraktı. Bu durum, ETH'nin hem bir rezerv para hem de gaz tüketim aracı olarak talebini sürdürülebilir kılıyor."
+                },
+                {
+                    "heading": "💡 Yatırımcı Perspektifi",
+                    "body": "L2 ağlarındaki TVL artışı sadece ana ağ ETH'yi değil; ARB, OP, MATIC gibi yerel Layer 2 tokenlarının vadeli paritelerinde de yüksek volatilite ve işlem fırsatları yaratmaktadır."
+                }
+            ]
         },
+
+        # ==================== SOLANA (SOL) ====================
         {
-            "category": "eth",
-            "symbol": "ETH",
-            "title": "Ethereum Vadeli Kontratlarında Boğa Opsiyonları Artışta",
-            "source": "Deribit Insights",
-            "time": "1 saat önce",
-            "sentiment": "positive",
-            "badge": "📈 Opsiyon",
-            "desc": "Aylık vade sonu öncesi 2.800 ve 3.000 dolar kullanım fiyatlı alım (call) opsiyonlarında yoğun kümelenme var."
-        },
-        # SOL
-        {
+            "id": "sol_active_users_record",
             "category": "sol",
             "symbol": "SOL",
             "title": "Solana Günlük Aktif Kullanıcı Sayısında Tüm Katman 1'leri Geride Bıraktı",
             "source": "SolanaFloor",
-            "time": "10 dk önce",
+            "time": "9 dk önce",
+            "read_time": "3 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 Güçlü Ağ Momentumı",
             "badge": "🟣 Ağ Rekoru",
-            "desc": "DEX işlem hacmi ve yeni token lansmanları Solana ağında rekor gas tüketimi yarattı."
+            "desc": "DEX işlem hacmi ve yeni vadeli token lansmanları Solana ağında rekor gas tüketimi üretirken SOL/USDT alımları hızlandı.",
+            "summary_bullets": [
+                "Solana günlük aktif cüzdan sayısı 5.8 milyonu aşarak tüm blokzincirler arasında birinci sıraya yerleşti.",
+                "Raydium ve Orca üzerindeki 24 saatlik DEX işlem hacmi 3.1 milyar dolarla Ethereum ana ağını yakaladı.",
+                "SOL/USDT vadeli kontratlarında 24 saatlik hacim 4.2 milyar doları aşarak Bitcoin ve Ethereum'un ardından üçüncü sırada yer aldı."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Ağ Aktivitesi ve DeFi İvmesi",
+                    "body": "Solana ağı, düşük işlem ücretleri ve milisaniyelik blok tamamlama süresi avantajıyla perakende ve algoritmik bot traderlarının bir numaralı adresi olmaya devam ediyor. Meme token çılgınlığı, pump.fun benzeri platformların ürettiği işlem trafiği ve Jupiter DEX agregatörünün pazar payı kazanması, Solana validatör gelirlerini ve SOL yakım hızını rekor seviyelere çıkardı."
+                },
+                {
+                    "heading": "⚡ Vadeli İşlem Teknik Görünümü",
+                    "body": "SOL/USDT vadeli grafiğinde yükselen üçgen formasyonu belirginleşiyor. 116.50$ üzerinde tutunan fiyat, 122.00$ ve 126.50$ dirençlerini kırmak için hacim topluyor. RSI indikatörü 62 seviyesinde alım yönlü iştahı teyit ederken, MACD histogramı pozitif bölgede genişliyor."
+                },
+                {
+                    "heading": "🎯 Kritik Seviyeler",
+                    "body": "Vadeli traderlar için 115.00$ - 116.00$ aralığı ana stop/destek bandı; yukarıda 122.50$ kırıldığı takdirde ilk kâr alma (TP1) hedefi 128.00$, ikinci hedef (TP2) ise 134.50$ olarak öne çıkıyor."
+                }
+            ]
         },
         {
+            "id": "sol_whale_margin",
             "category": "sol",
             "symbol": "SOL",
-            "title": "Büyük Balina Solana Vadeli Piyasasında Yüksek Hacimli Long Pozisyon Açtı",
+            "title": "Büyük Balina Solana Vadeli Piyasasında 150.000 SOL Teminat Ekledi",
             "source": "Whale Alert",
-            "time": "30 dk önce",
+            "time": "27 dk önce",
+            "read_time": "2 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 Balina Akışı",
             "badge": "🐋 Balina",
-            "desc": "Zincir üstü veriler tek işlemde 150.000 SOL transferinin vadeli teminat hesabına eklendiğini gösteriyor."
+            "desc": "Zincir üstü veriler tek işlemde yaklaşık 18 milyon dolarlık SOL transferinin doğrudan vadeli teminat hesabına aktarıldığını tespit etti.",
+            "summary_bullets": [
+                "Whale Alert, bilinmeyen bir soğuk cüzdandan Binance Vadeli Teminat cüzdanına 150.000 SOL aktarımını raporladı.",
+                "Vadeli emir defterinde 115$ - 117$ bandında devasa alım blokları (buy-wall) konumlandırıldı.",
+                "Fonlama oranları stabil seyrederken balina hareketinin long yönlü pozisyon genişletme amaçlı olduğu değerlendiriliyor."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Zincir Üstü Balina Analizi",
+                    "body": "Büyük yatırımcıların spot cüzdanlardan vadeli hesaplara teminat aktarması, genellikle iki amaca hizmet eder: Ya mevcut kaldıraçlı pozisyonun tasfiye riskini düşürmek ya da yeni bir agresif long pozisyon dalgası başlatmak. Emir defteri derinliği incelendiğinde, bu transferin ardından yüklü miktarda limit alım emirlerinin girildiği görülüyor."
+                },
+                {
+                    "heading": "💡 Risk Uyarısı",
+                    "body": "Balina hareketleri ani likidite dalgalanmaları yaratabilir. Bireysel traderların balina emirlerinin altına sığınarak stop seviyelerini 114.50$ altına koymaları mantıklı bir risk koruması sağlayacaktır."
+                }
+            ]
         },
+
+        # ==================== ALTCOINLER (MEME, L1, AI) ====================
         {
-            "category": "sol",
-            "symbol": "SOL",
-            "title": "Firedancer Testnet Performans Testlerinde Saniyede 1 Milyon İşleme Ulaştı",
-            "source": "Jump Crypto",
-            "time": "1 saat önce",
-            "sentiment": "positive",
-            "badge": "⚡ Teknoloji",
-            "desc": "Yeni bağımsız doğrulayıcı istemcisi Solana ağ güvenliğini ve verimini kurumsal seviyeye taşıyor."
-        },
-        # ALTCOINS
-        {
+            "id": "alt_pepe_volume",
             "category": "alt",
             "symbol": "PEPE",
-            "title": "PEPE Vadeli İşlemlerinde 24 Saatlik Hacim 1.2 Milyar Doları Aştı",
+            "title": "PEPE Vadeli İşlemlerinde 24 Saatlik Hacim 1.2 Milyar Doları Aştı: Meme İvmesi Güçleniyor",
             "source": "Binance Futures",
-            "time": "18 dk önce",
+            "time": "14 dk önce",
+            "read_time": "2 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 Yüksek Volatilite Fırsatı",
             "badge": "🐸 Meme",
-            "desc": "Topluluk desteği ve sosyal medya etkileşimleri ile PEPE vadeli kontratlarında volatilite ve likidite yükseldi."
+            "desc": "Topluluk ilgisi ve balina alımlarıyla PEPE vadeli sözleşmelerinde oynaklık ve likidite tavan yaptı.",
+            "summary_bullets": [
+                "1000PEPE vadeli kontratları, altcoin vadeli tahtalarında hacim bakımından ilk 5 arasına yerleşti.",
+                "Son 24 saatte 18 milyon dolarlık short pozisyon tasfiye edildi.",
+                "RSI göstergesi 64 seviyesinde güçlü trend momentumuna işaret ediyor."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Meme Token Sektöründe Likidite Akışı",
+                    "body": "Bitcoin'in konsolide olduğu dönemlerde altcoinlere ve özellikle meme tokenlara yönelen spekülatif sermaye, PEPE vadeli kontratlarında işlem hacmini 1.2 milyar doların üzerine taşıdı. Küçük sermayeli yatırımcıların kaldıraçlı long pozisyonları ve zincir üstü balina cüzdanlarının birikim hamleleri fiyatı yukarı yönde destekliyor."
+                },
+                {
+                    "heading": "💡 Vadeli Tavsiye & Kaldıraç Uyarısı",
+                    "body": "PEPE gibi yüksek volatiliteye sahip meme tokenlarda 10x-20x gibi yüksek kaldıraçlar ani iğnelerde anında tasfiyeye yol açabilir. Maksimum 3x - 5x kaldıraç kullanılması ve ATR göstergesi doğrultusunda geniş stop aralığı bırakılması önemle tavsiye edilir."
+                }
+            ]
         },
         {
+            "id": "alt_doge_wallets",
             "category": "alt",
             "symbol": "DOGE",
-            "title": "Dogecoin Cüzdan Sayısı 6.8 Milyonu Aştı: Ödeme Entegrasyonu Beklentisi",
+            "title": "Dogecoin Cüzdan Sayısı 6.8 Milyonu Aştı: Sosyal Medya Ödeme Entegrasyonu Beklentisi",
             "source": "CoinDesk",
-            "time": "28 dk önce",
+            "time": "32 dk önce",
+            "read_time": "3 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 Topluluk & Ödeme Haberi",
             "badge": "🐕 Doge",
-            "desc": "Büyük sosyal platformlarda olası ödeme entegrasyonu dedikoduları alım dalgasını tetikledi."
+            "desc": "X platformunun ödeme lisansları süreçlerindeki ilerleme haberleri Dogecoin vadeli tahtasında alım dalgasını tetikledi.",
+            "summary_bullets": [
+                "Dogecoin ağındaki sıfır olmayan bakiye cüzdan sayısı 6.82 milyona ulaşarak tüm zamanların rekorunu kırdı.",
+                "Vadeli piyasada fonlama oranı son 1 haftanın en yüksek pozitif seviyesine tırmandı.",
+                "DOGE/USDT paritesinde 0.20$ psikolojik direnci hedefleniyor."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Sosyal Medya Entegrasyonu Beklentileri",
+                    "body": "X (eski adıyla Twitter) platformunun ABD'deki eyaletlerden aldığı para transfer lisansları sayısı artarken, kripto para ödemelerinin platforma entegre edileceği beklentisi Dogecoin'e olan talebi taze tutuyor. Özellikle Elon Musk'ın paylaşımlarına duyarlı olan vadeli tahtalarda son saatlerde kurumsal boyutta hacim artışı dikkat çekiyor."
+                },
+                {
+                    "heading": "🎯 Seviyeler",
+                    "body": "DOGE/USDT paritesinde 0.172$ seviyesi ilk direnç; kırılım halinde 0.195$ ve 0.220$ seviyeleri radara girecektir. Destek seviyesi 0.154$ bandında bulunmaktadır."
+                }
+            ]
         },
         {
+            "id": "alt_bnb_chain",
             "category": "alt",
             "symbol": "BNB",
-            "title": "BNB Chain Günlük İşlem Sayısında %18 Artış Kaydedildi",
+            "title": "BNB Chain Günlük İşlem Sayısında %18 Artış: Yeni Launchpool ve Gas İndirimi Etkisi",
             "source": "BNB Chain Blog",
-            "time": "50 dk önce",
+            "time": "48 dk önce",
+            "read_time": "2 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 Kararlı Yükseliş",
             "badge": "🟡 BNB",
-            "desc": "Düşük işlem ücretleri ve yeni DeFi protokolleri zincir içi etkileşimi hızla artırıyor."
+            "desc": "Binance Launchpool kilitlenmeleri ve BSC ekosistemindeki yeni DeFi protokolleri zincir içi etkileşimi hızla artırıyor.",
+            "summary_bullets": [
+                "Yeni token dağıtım etkinlikleri (Launchpool & Megadrop) için 14 milyondan fazla BNB kilitlendi.",
+                "BNB vadeli işlemlerinde fonlama oranı dengeli, açık pozisyonlar 780M$ seviyesinde.",
+                "Fiyat EMA 50 ortalaması üzerinde istikrarlı yükseliş trendini koruyor."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 BNB Ekosistemindeki Güçlü Temel Veriler",
+                    "body": "Dünyanın en büyük borsası Binance'in ekosistem tokenı olan BNB, hem Launchpool stake getirisi hem de BSC ağındaki düşük işlem ücretleri sayesinde yatırımcılar tarafından elde tutulmaya devam ediyor. Dolaşımdaki BNB miktarının sürekli kilitlenmesi, spot satış baskısını minimuma indirerek vadeli piyasada güçlü bir fiyat tabanı oluşturuyor."
+                }
+            ]
         },
         {
+            "id": "alt_avax_rwa",
             "category": "alt",
             "symbol": "AVAX",
-            "title": "Avalanche Kurumsal Varlık Tokenizasyonunda Yeni Ortaklık Duyurdu",
+            "title": "Avalanche (AVAX) Gerçek Dünya Varlıkları (RWA) İçin Kurumsal Devlerle Ortaklık Duyurdu",
             "source": "Ava Labs",
             "time": "1 saat önce",
+            "read_time": "3 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 RWA & Kurumsal İlgi",
             "badge": "🔺 RWA",
-            "desc": "Gerçek dünya varlıklarının (RWA) Avalanche alt ağlarına taşınması kurumsal ilgiyi canlandırdı."
+            "desc": "Geleneksel finans fonlarının Avalanche alt ağlarına (Subnet) taşınması kurumsal sermaye girişini canlandırdı.",
+            "summary_bullets": [
+                "Wall Street yatırım fonları, özel kredi ve hazine bonolarını Avalanche Subnet üzerinde tokenize ediyor.",
+                "AVAX vadeli işlemlerinde 24 saatlik işlem hacmi %34 artış kaydetti.",
+                "30$ direncinin aşılması durumunda orta vadeli hedef 38$ olarak analiz ediliyor."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 RWA Trendi ve Avalanche Mimarisi",
+                    "body": "Gerçek Dünya Varlıklarının (RWA) blokzincire taşınması teması 2026 yılına damgasını vururken, Avalanche sunduğu özelleştirilebilir alt ağlar (Subnets) sayesinde kurumsal bankaların ve fonların bir numaralı tercihi haline geldi. Tokenizasyon projelerinin getirdiği likidite, yerel token AVAX'ın vadeli kontratlarında da güçlü alım talebi yaratmaktadır."
+                }
+            ]
         },
-        # MACRO
+
+        # ==================== MAKROEKONOMİ & PİYASA HİSSİ ====================
         {
+            "id": "macro_fed_liquidity",
             "category": "macro",
             "symbol": "GENEL",
-            "title": "FED Faiz İndirimi Beklentileri Küresel Likiditeyi ve Kripto Talebini Artırıyor",
+            "title": "Fed Faiz İndirimi Beklentileri Küresel Likiditeyi ve Kripto Talebini Artırıyor",
             "source": "Reuters Crypto",
-            "time": "15 dk önce",
+            "time": "11 dk önce",
+            "read_time": "3 dk okuma",
             "sentiment": "positive",
+            "impact": "🟢 Makro Boğa Desteği",
             "badge": "🌍 Makro",
-            "desc": "Gevşeyen küresel para politikası kripto para gibi yüksek getirili varlıklara kurumsal fon akışını destekliyor."
+            "desc": "Gevşeyen küresel para politikası ve Dolar Endeksindeki (DXY) geri çekilme kripto para gibi yüksek getirili varlıklara sermaye akıtıyor.",
+            "summary_bullets": [
+                "Piyasalar Fed'in önümüzdeki toplantılarda faiz indirimlerine devam etme olasılığını %88 olarak fiyatlıyor.",
+                "Dolar Endeksi (DXY) 103.5 seviyesine gerileyerek küresel risk iştahını destekledi.",
+                "Kripto para piyasasına giren net stablecoin (USDT + USDC) arzı aylık bazda 4.8 milyar dolar arttı."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Küresel Likidite ve Kripto Korelasyonu",
+                    "body": "Tarihsel döngüler incelendiğinde, küresel M2 para arzının genişlediği ve merkez bankalarının faiz indirim döngüsüne girdiği dönemler, kripto para piyasalarının en güçlü boğa koşularına sahne olmuştur. Doların getirisinin düşmesi, küresel varlık yöneticilerini hisse senetleri ve kripto para gibi alternatif büyüme varlıklarına yöneltmektedir."
+                },
+                {
+                    "heading": "⚡ Vadeli Piyasaya Etkisi",
+                    "body": "Makro likiditenin genişlemesi, vadeli piyasalarda ani çöküş (flash crash) risklerini azaltırken, dip seviyelerin hızla alıcı bulmasını sağlamaktadır. Traderlar için trend yönlü long stratejiler makro görünümle tam uyumludur."
+                }
+            ]
         },
         {
+            "id": "macro_fear_greed",
             "category": "macro",
             "symbol": "GENEL",
-            "title": "Kripto Korku ve Açgözlülük Endeksi Açgözlülük Bölgesinde (72/100)",
+            "title": "Kripto Korku ve Açgözlülük Endeksi Açgözlülük Bölgesinde (72/100): Piyasa Hissi Analizi",
             "source": "Alternative.me",
-            "time": "40 dk önce",
+            "time": "38 dk önce",
+            "read_time": "2 dk okuma",
             "sentiment": "positive",
+            "impact": "🟡 Güçlü İştah / Düzeltme Nöbeti",
             "badge": "📊 Piyasa Hissi",
-            "desc": "Piyasadaki genel risk iştahı kuvvetli. Vadeli fonlama oranları ve hacim artışı yükseliş trendini destekliyor."
+            "desc": "Piyasadaki genel risk iştahı kuvvetli kalırken vadeli fonlama oranları ve hacim artışı yükseliş trendini destekliyor.",
+            "summary_bullets": [
+                "Korku ve Açgözlülük Endeksi dünkü 68 seviyesinden 72 'Açgözlülük' (Greed) seviyesine yükseldi.",
+                "Sosyal medya duyarlılık analizi %76 oranında pozitif beklenti içeriyor.",
+                "Aşırı açgözlülük (85+) bölgesine girilmediği sürece mevcut yükselişin sağlıklı olduğu değerlendiriliyor."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Piyasa Hissi ve Trader Psikolojisi",
+                    "body": "Alternative.me tarafından yayınlanan Korku ve Açgözlülük Endeksi; volatilite (%25), piyasa momentumu/hacmi (%25), sosyal medya (%15), anketler (%15), dominans (%10) ve arama trendleri (%10) verilerini harmanlayarak hesaplanır. 72 seviyesi piyasada alıcıların güçlü ve iyimser olduğunu, ancak henüz kör bir çılgınlık aşamasına gelinmediğini gösterir."
+                },
+                {
+                    "heading": "💡 Strateji Önerisi",
+                    "body": "Açgözlülük seviyelerinde trend takip edilmeli ancak rehavete kapılınmamalıdır. Kâr seviyelerinde kısmi realizasyon yapmak ve stop seviyelerini kâra çekerek ilerlemek en sağlıklı vadeli işlem yaklaşımıdır."
+                }
+            ]
         },
         {
+            "id": "macro_market_cap",
             "category": "macro",
             "symbol": "GENEL",
             "title": "Küresel Kripto Para Toplam Piyasa Değeri 2.8 Trilyon Doları Zorluyor",
             "source": "CoinMarketCap",
             "time": "1 saat önce",
+            "read_time": "2 dk okuma",
             "sentiment": "positive",
+            "impact": "📈 Sermaye Akışı Güçlü",
             "badge": "📈 Piyasa Değeri",
-            "desc": "Bitcoin hakimiyeti dengede kalırken altcoinlerde sermaye rotasyonu ve hacim artışı gözleniyor."
+            "desc": "Bitcoin hakimiyeti dengede kalırken altcoinlerde sermaye rotasyonu ve 24 saatlik işlem hacmi artışı gözleniyor.",
+            "summary_bullets": [
+                "Toplam kripto piyasa değeri (TOTAL) son 24 saatte %2.4 artışla 2.78 trilyon dolara ulaştı.",
+                "Altcoin piyasa değeri (TOTAL2) 1.15 trilyon dolar kritik direncini test ediyor.",
+                "Borsalardaki 24 saatlik spot ve vadeli kümülatif hacim 140 milyar doları geçti."
+            ],
+            "sections": [
+                {
+                    "heading": "📌 Piyasa Değerinde Son Durum",
+                    "body": "Piyasa toplam değerinin 2.8 trilyon dolara dayanması, kurumsal ve bireysel fon akışının kesintisiz sürdüğünü gösteriyor. Bitcoin'in yüksek seviyelerde yatay konsolidasyona girmesi durumunda sermayenin yüksek potansiyelli Katman-1, DeFi ve yapay zeka altcoinlerine kayması beklenmektedir."
+                }
+            ]
         }
     ]
 
@@ -724,37 +958,67 @@ def get_crypto_news(symbol: str, category: str = "all") -> List[Dict[str, Any]]:
         if sym_matches:
             return sym_matches
         
-        # Eğer özel listede yoksa, o coine özel anlık gerçekçi vadeli haberleri oluştur
+        # Eğer özel listede yoksa, o coine özel tam kapsamlı detaylı haber paketi oluştur
         coin_dynamic = [
             {
+                "id": f"{sym.lower()}_dyn_oi",
                 "category": "alt",
                 "symbol": sym,
                 "title": f"{sym} Vadeli Kontratlarında Açık Pozisyonlar ve Fonlama Oranları Dengede",
                 "source": "Binance News",
-                "time": "12 dk önce",
+                "time": "10 dk önce",
+                "read_time": "3 dk okuma",
                 "sentiment": "positive",
+                "impact": "⚡ Vadeli Hareketlilik",
                 "badge": "⚡ Vadeli",
-                "desc": f"{sym}/USDT vadeli işlemlerinde alıcı ve satıcı dengesi korunurken kritik teknik kırılım seviyeleri takip ediliyor."
+                "desc": f"{sym}/USDT vadeli işlemlerinde alıcı ve satıcı dengesi korunurken kritik teknik kırılım seviyeleri yakından takip ediliyor.",
+                "summary_bullets": [
+                    f"{sym}/USDT vadeli işlem çiftinde 24 saatlik işlem hacmi ve açık pozisyonlar belirgin artış kaydetti.",
+                    "Fonlama oranı pozitif-nötr bölgede kalarak sağlıklı kaldıraç dengesini koruyor.",
+                    f"Teknik göstergeler {sym} için önemli destek ve direnç eşiklerinde volatilite sıkışmasına işaret ediyor."
+                ],
+                "sections": [
+                    {
+                        "heading": f"📌 {sym} Vadeli İşlemlerinde Son Gelişmeler",
+                        "body": f"Binance Vadeli İşlemler (Futures) tahtasında işlem gören {sym}/USDT sözleşmesi, son saatlerde artan emir akışı ve derinlik kazanımıyla dikkat çekiyor. Kurumsal ve algoritmik piyasa yapıcıların aktif kotasyon sağladığı paritede, alıcıların destek seviyelerini güçlü bir şekilde savunduğu gözleniyor."
+                    },
+                    {
+                        "heading": "⚡ Açık Pozisyon ve Likidasyon Görünümü",
+                        "body": f"{sym} sözleşmesindeki açık pozisyon (Open Interest) verileri, traderların yeni pozisyonlar inşa ettiğini teyit ediyor. Her iki yönde de biriken likidasyon havuzları, ani hacim girişlerinde belirgin bir kırılım potansiyeline işaret etmektedir."
+                    },
+                    {
+                        "heading": "🎯 Vadeli Traderlar İçin Strateji",
+                        "body": f"{sym} paritesinde işlem açarken hareketli ortalamalar (EMA 50 ve EMA 200) yakından izlenmelidir. Yüksek volatiliteye karşı koruyucu stop-loss kullanımı ve 3x - 6x aralığında makul kaldıraç tercih edilmesi sermaye güvenliği için esastır."
+                    }
+                ]
             },
             {
+                "id": f"{sym.lower()}_dyn_tech",
                 "category": "alt",
                 "symbol": sym,
-                "title": f"{sym} 24 Saatlik Vadeli İşlem Hacminde Güçlü Artış Görülüyor",
+                "title": f"{sym} Teknik Analiz Raporu: RSI ve Hacim Göstergeleri Yeni Sinyali Destekliyor",
                 "source": "Binance Square",
-                "time": "28 dk önce",
+                "time": "25 dk önce",
+                "read_time": "2 dk okuma",
                 "sentiment": "positive",
-                "badge": "📊 Hacim",
-                "desc": f"Teknik indikatörler {sym} için önemli destek ve direnç bantlarında volatilite artışına işaret ediyor."
-            },
-            {
-                "category": "alt",
-                "symbol": sym,
-                "title": f"{sym} Teknik Analiz: RSI ve EMA Kesişimi Yeni Sinyali Destekliyor",
-                "source": "CoinDesk",
-                "time": "55 dk önce",
-                "sentiment": "neutral",
+                "impact": "📊 Teknik Fırsat",
                 "badge": "📈 Teknik",
-                "desc": f"Kısa vadeli hareketli ortalamalar üzerinde tutunmaya çalışan {sym}, vadeli yatırımcıların yakın radarında."
+                "desc": f"{sym}/USDT paritesi kısa vadeli hareketli ortalamalarının üzerinde tutunmaya çalışırken vadeli alıcıların radarına girdi.",
+                "summary_bullets": [
+                    f"RSI ve MACD osilatörleri {sym} grafiğinde momentum toparlanmasını onaylıyor.",
+                    "Emir defterinde alış kademeleri satış kademelerine oranla daha yoğun konumlanmış durumda.",
+                    "Olası direnç testinde hacimli kırılım yükseliş kanalını genişletebilir."
+                ],
+                "sections": [
+                    {
+                        "heading": "📌 Teknik Göstergelerin Uyumu",
+                        "body": f"{sym} vadeli grafiklerinde 15 dakikalık ve 1 saatlik periyotlar incelendiğinde, fiyatın destek bandından aldığı tepkiyle birlikte toparlanma eğilimi sergilediği görülüyor. Özellikle hacim göstergelerindeki pozitif ayrışma, olası yukarı yönlü denemeleri destekliyor."
+                    },
+                    {
+                        "heading": "💡 Risk ve Kâr Alma Hedefleri",
+                        "body": "Pozisyona girerken Risk/Getiri oranının en az 1:2 seviyesinde tutulması, birinci kâr alma noktasında (TP1) pozisyonun yarısının realize edilerek stopun giriş seviyesine çekilmesi önerilir."
+                    }
+                ]
             }
         ]
         macro = [n for n in all_news_pool if n.get("category") == "macro"]
