@@ -202,7 +202,15 @@ async def handle_index(request):
     index_path = os.path.join(os.path.dirname(__file__), "static", "index.html")
     if os.path.exists(index_path):
         with open(index_path, "r", encoding="utf-8") as f:
-            return web.Response(text=f.read(), content_type="text/html")
+            return web.Response(
+                text=f.read(),
+                content_type="text/html",
+                headers={
+                    "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                }
+            )
     return web.Response(text="<h1>Mini App Yüklenemedi</h1>", content_type="text/html")
 
 def clean_symbol(raw_sym: str) -> str:
